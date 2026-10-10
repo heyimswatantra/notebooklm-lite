@@ -1,0 +1,63 @@
+# ==============================================================================
+# Python - Standard Project Files
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# ==============================================================================
+# Virtual Environments
+# ==============================================================================
+.venv/
+venv/
+env/
+ENV/
+
+# ==============================================================================
+# Environment Variables & Secrets (CRITICAL for LLM/Vector DB API Keys)
+# ==============================================================================
+.env
+.env.local
+.env.*
+!.env.example
+secrets.toml
+credentials.json
+
+# ==============================================================================
+# RAG-Specific Exclusions (Vector DBs, Models, Data & Indexes)
+# ==============================================================================
+# Local vector database storage paths
+.chroma/
+chroma_db/
+faiss_index/
+lancedb/
+qdrant_storage/
+
+# Large Language Models / Embeddings (Downloaded locally)
+models/
+*.bin
+*.gguf
+*.onnx
+
+# Data pipelines / Raw documents / Cached embeddings
+data/raw/
+data/processed/
+*.pdf
+*.txt
+*.csv
+*.jsonl
+.llama_index/
+.cache/
+
+# ==============================================================================
+# IDEs, Editors & OS Files
+# ==============================================================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
