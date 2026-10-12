@@ -115,3 +115,18 @@ before M1; the agent adds nothing without asking.
 
 ### Reason
 Reproducible installs, fast Docker builds, one tool for Python and deps.
+
+## ADR-011 — Use generate_content, not interactions API
+
+### Decision
+Use `client.models.generate_content()` from the google-genai SDK for all
+chat completions. Do not use the newer `client.interactions.create()` API.
+
+### Reason
+Our ChatProvider.chat() is stateless: we pass the full message list on every
+call, and SPEC.md says each question is independent (no conversation memory).
+generate_content fits that model directly. The interactions API is designed
+for stateful, multi-turn conversations with server-side storage, which adds
+complexity we don't need. If conversation memory is added later, we can still
+pass history through chat(). Treat interactions as out of scope unless a
+later phase explicitly needs it.
