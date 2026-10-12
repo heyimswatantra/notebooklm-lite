@@ -33,11 +33,13 @@
 - [x] POST /notebooks, GET /notebooks
 
 ### M3 — Ingestion
-- [ ] PDF upload
 - [ ] PyMuPDF extraction
 - [ ] Chunking
+- [ ] scripts/inspect_chunks.py (print chunks of a local PDF; no DB, no API)
+- [ ] PDF upload endpoint
 - [ ] Embedding
 - [ ] Storage
+- [ ] GET /notebooks/{id}/documents
 
 ### M4 — Retrieval
 - [ ] Question embedding
