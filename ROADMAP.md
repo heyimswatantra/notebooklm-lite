@@ -24,13 +24,13 @@
 - [x] Smoke test: embeds one string and gets one chat reply (verifies both API keys)
 
 ### M2 — Data
-- [ ] Migration runner (scripts/migrate.py + schema_migrations table)
-- [ ] notebooks table
-- [ ] documents table
-- [ ] chunks table
-- [ ] query_logs table
-- [ ] Startup check: chunks.embedding dimension == EMBED_DIMENSION
-- [ ] POST /notebooks, GET /notebooks
+- [x] Migration runner (scripts/migrate.py + schema_migrations table)
+- [x] notebooks table
+- [x] documents table
+- [x] chunks table
+- [x] query_logs table
+- [x] Startup check: chunks.embedding dimension == EMBED_DIMENSION
+- [x] POST /notebooks, GET /notebooks
 
 ### M3 — Ingestion
 - [ ] PDF upload
