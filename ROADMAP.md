@@ -14,14 +14,14 @@
 - **M7** Observability
 
 ### M1 — Infrastructure
-- [ ] Repository setup
-- [ ] Dockerfile for backend using uv (`uv sync --frozen`, venv on PATH so `python` and `pytest` work inside the container)
-- [ ] Docker Compose
-- [ ] PostgreSQL
-- [ ] pgvector
-- [ ] FastAPI
-- [ ] `llm/` interface (base, gemini, voyage, factory), fake providers, config
-- [ ] Smoke test: embeds one string and gets one chat reply (verifies both API keys)
+- [x] Repository setup
+- [x] Dockerfile for backend using uv (`uv sync --frozen`, venv on PATH so `python` and `pytest` work inside the container)
+- [x] Docker Compose
+- [x] PostgreSQL
+- [x] pgvector
+- [x] FastAPI
+- [x] `llm/` interface (base, gemini, voyage, factory), fake providers, config
+- [x] Smoke test: embeds one string and gets one chat reply (verifies both API keys)
 
 ### M2 — Data
 - [ ] notebooks table
