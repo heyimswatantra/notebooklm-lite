@@ -130,3 +130,31 @@ for stateful, multi-turn conversations with server-side storage, which adds
 complexity we don't need. If conversation memory is added later, we can still
 pass history through chat(). Treat interactions as out of scope unless a
 later phase explicitly needs it.
+
+---
+
+## ADR-012 — tiktoken (cl100k_base) for chunk-size token counting
+
+### Decision
+
+Use tiktoken's cl100k_base encoding for counting tokens when splitting
+text into chunks. This is NOT Voyage's tokenizer.
+
+Voyage AI publishes its own tokenizer:
+- `voyageai.Client().tokenize(texts, model=...)` — returns token lists
+- `voyageai.Client().count_tokens(texts, model=...)` — returns total count
+- Open-source on HuggingFace (`voyageai/voyage-4-large` etc.)
+
+Voyage token counts are ~1.1–1.2× higher than cl100k_base equivalents.
+
+### Reason
+
+For chunking, only the approximate size matters: we want roughly 500-token
+chunks, not exactly 500 Voyage tokens. cl100k_base is fast, local (no API
+call), and available as an already-approved dependency (tiktoken). The
+slight count mismatch doesn't affect retrieval quality.
+
+### Constraint
+
+Batch-size and rate-limit logic in `voyage.py` must NOT rely on cl100k_base
+counts. Use Voyage's own `count_tokens()` for TPM tracking there.
