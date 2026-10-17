@@ -6,6 +6,38 @@ from voyageai import error as voyage_error
 
 from backend.llm.base import EmbedResult, LLMError, LLMRateLimitError, LLMAuthError
 
+# Voyage embed API limits (see chunking.py — use Voyage count_tokens, not tiktoken).
+_MAX_BATCH_ITEMS = 128
+_MAX_BATCH_TOKENS = 120_000
+
+
+def _batch_texts_for_embed(
+    texts: list[str],
+    client: voyageai.Client,
+    model: str,
+) -> list[list[str]]:
+    """Split texts into API batches by item count and total Voyage tokens."""
+    if not texts:
+        return []
+
+    batches: list[list[str]] = []
+    current: list[str] = []
+
+    for text in texts:
+        candidate = current + [text]
+        if current and (
+            len(candidate) > _MAX_BATCH_ITEMS
+            or client.count_tokens(candidate, model=model) > _MAX_BATCH_TOKENS
+        ):
+            batches.append(current)
+            current = [text]
+        else:
+            current = candidate
+
+    if current:
+        batches.append(current)
+    return batches
+
 
 class VoyageEmbeddingProvider:
     """Embedding provider using the Voyage AI SDK."""
@@ -21,11 +53,9 @@ class VoyageEmbeddingProvider:
             return EmbedResult(vectors=[], model=self.model, dimension=self.dimension)
             
         input_type = kind
-        batch_size = 128
         all_vectors = []
-        
-        for i in range(0, len(texts), batch_size):
-            batch = texts[i:i+batch_size]
+
+        for batch in _batch_texts_for_embed(texts, self.client, self.model):
             batch_retries = 0
             max_retries = 3
             

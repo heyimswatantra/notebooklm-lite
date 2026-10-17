@@ -105,7 +105,8 @@ def test_voyage_embed_success():
     mock_response = MagicMock()
     mock_response.embeddings = [[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8]]
     provider.client.embed = MagicMock(return_value=mock_response)
-    
+    provider.client.count_tokens = MagicMock(return_value=2)
+
     result = provider.embed(["doc 1", "doc 2"], kind="document")
     
     assert isinstance(result, EmbedResult)
@@ -137,27 +138,54 @@ def test_voyage_embed_dimension_mismatch():
     mock_response = MagicMock()
     mock_response.embeddings = [[0.1, 0.2, 0.3]]
     provider.client.embed = MagicMock(return_value=mock_response)
-    
+    provider.client.count_tokens = MagicMock(return_value=1)
+
     with pytest.raises(LLMError, match="dimension mismatch"):
         provider.embed(["test"], kind="document")
 
 
 def test_voyage_embed_batching():
     provider = VoyageEmbeddingProvider(api_key="test-api-key", model="voyage-4-lite", dimension=2)
-    
+
     # 200 texts -> should produce 2 batches (128 + 72)
     texts = [f"text {i}" for i in range(200)]
-    
+
     def mock_embed(texts, model, input_type):
         res = MagicMock()
         res.embeddings = [[0.1, 0.2] for _ in texts]
         return res
-        
+
     provider.client.embed = MagicMock(side_effect=mock_embed)
-    
+    provider.client.count_tokens = MagicMock(side_effect=lambda t, model: len(t))
+
     result = provider.embed(texts, kind="document")
     assert len(result.vectors) == 200
     assert provider.client.embed.call_count == 2
+
+
+def test_voyage_embed_batches_by_token_limit():
+    provider = VoyageEmbeddingProvider(api_key="test-api-key", model="voyage-4-lite", dimension=2)
+
+    texts = ["a", "b", "c", "d"]
+
+    def mock_embed(texts, model, input_type):
+        res = MagicMock()
+        res.embeddings = [[0.1, 0.2] for _ in texts]
+        return res
+
+    provider.client.embed = MagicMock(side_effect=mock_embed)
+
+    # Force a new batch after two items based on token total (not item count).
+    def mock_count_tokens(batch, model):
+        return len(batch) * 60_000
+
+    provider.client.count_tokens = MagicMock(side_effect=mock_count_tokens)
+
+    result = provider.embed(texts, kind="document")
+    assert len(result.vectors) == 4
+    assert provider.client.embed.call_count == 2
+    assert len(provider.client.embed.call_args_list[0].kwargs["texts"]) == 2
+    assert len(provider.client.embed.call_args_list[1].kwargs["texts"]) == 2
 
 
 @patch("time.sleep", return_value=None)
@@ -166,7 +194,8 @@ def test_voyage_embed_rate_limit_retry_and_exhaustion(mock_sleep):
     
     error_rl = voyage_errors.RateLimitError("Rate limit exceeded")
     provider.client.embed = MagicMock(side_effect=error_rl)
-    
+    provider.client.count_tokens = MagicMock(return_value=1)
+
     with pytest.raises(LLMRateLimitError):
         provider.embed(["test"], kind="query")
         
@@ -179,7 +208,8 @@ def test_voyage_embed_auth_error_no_retry():
     
     error_auth = voyage_errors.AuthenticationError("Invalid API key")
     provider.client.embed = MagicMock(side_effect=error_auth)
-    
+    provider.client.count_tokens = MagicMock(return_value=1)
+
     with pytest.raises(LLMAuthError):
         provider.embed(["test"], kind="query")
         

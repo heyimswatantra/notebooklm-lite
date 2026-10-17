@@ -36,10 +36,10 @@
 - [x] PyMuPDF extraction
 - [x] Chunking
 - [x] scripts/inspect_chunks.py (print chunks of a local PDF; no DB, no API)
-- [ ] PDF upload endpoint
-- [ ] Embedding
-- [ ] Storage
-- [ ] GET /notebooks/{id}/documents
+- [x] PDF upload endpoint
+- [x] Embedding
+- [x] Storage
+- [x] GET /notebooks/{id}/documents
 
 ### M4 — Retrieval
 - [ ] Question embedding
@@ -86,6 +86,7 @@
 - [ ] Evaluate answer quality
 - [ ] Compare chunking strategies
 - [ ] Compare retrieval parameters
+- [ ] Make chunk size/overlap configurable and record them per experiment
 
 ---
 

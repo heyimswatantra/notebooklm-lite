@@ -21,6 +21,14 @@ class ExtractionError(Exception):
     """Raised when a PDF cannot be processed."""
 
 
+class CorruptPdfError(ExtractionError):
+    """PDF bytes cannot be opened by PyMuPDF (includes invalid/corrupt files)."""
+
+
+class NoExtractableTextError(ExtractionError):
+    """PDF opens but no page contains extractable text."""
+
+
 def extract_pages(pdf_bytes: bytes) -> list[PageText]:
     """Extract text from every page of a PDF.
 
@@ -41,7 +49,7 @@ def extract_pages(pdf_bytes: bytes) -> list[PageText]:
     try:
         doc = pymupdf.Document(stream=pdf_bytes, filetype="pdf")
     except Exception as exc:
-        raise ExtractionError(f"Not a valid PDF: {exc}") from exc
+        raise CorruptPdfError(f"Not a valid PDF: {exc}") from exc
 
     pages: list[PageText] = []
 
@@ -58,7 +66,7 @@ def extract_pages(pdf_bytes: bytes) -> list[PageText]:
     doc.close()
 
     if not pages:
-        raise ExtractionError(
+        raise NoExtractableTextError(
             "No extractable text found. The PDF may be scanned or image-only."
         )
 

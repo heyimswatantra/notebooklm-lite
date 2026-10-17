@@ -26,6 +26,13 @@ def create_notebook(conn: psycopg.Connection, name: str) -> Notebook:
         return Notebook(id=row[0], name=row[1], created_at=row[2])
 
 
+def notebook_exists(conn: psycopg.Connection, notebook_id: int) -> bool:
+    """Return True if a notebook with the given id exists."""
+    with conn.cursor() as cur:
+        cur.execute("SELECT 1 FROM notebooks WHERE id = %s", (notebook_id,))
+        return cur.fetchone() is not None
+
+
 def list_notebooks(conn: psycopg.Connection) -> list[Notebook]:
     """Returns all notebooks ordered by created_at DESC, id DESC."""
     with conn.cursor() as cur:

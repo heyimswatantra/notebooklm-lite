@@ -125,5 +125,5 @@ def test_client(test_db_url: str, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr("backend.main.get_settings", lambda: test_settings)
     monkeypatch.setattr("backend.db.connection.get_settings", lambda: test_settings)
 
-    with TestClient(app) as client:
+    with TestClient(app, raise_server_exceptions=False) as client:
         yield client

@@ -2,7 +2,9 @@ import psycopg
 import pytest
 
 from backend.db.checks import verify_embedding_dimension
+from backend.db.documents import insert_chunks, insert_document
 from backend.db.notebooks import create_notebook, list_notebooks
+from backend.rag.chunking import Chunk
 from migrate import run_migrations, get_default_migrations_dir  # type: ignore
 
 
@@ -107,6 +109,25 @@ def test_embedding_dimension_check_fails_on_missing_table(db_conn: psycopg.Conne
     error_msg = str(exc_info.value)
     assert "does not exist" in error_msg
     assert "run migrations" in error_msg
+
+
+def test_chunk_insert_accepts_plain_list_float_1024(db_conn: psycopg.Connection):
+    """pgvector + psycopg accept list[float] embeddings at dimension 1024."""
+    nb = create_notebook(db_conn, "Vector test")
+    doc = insert_document(db_conn, nb.id, "sample.pdf", page_count=1)
+    vector = [0.01] * 1024
+    chunks = [Chunk(chunk_index=0, page_number=1, text="hello", token_count=1)]
+    insert_chunks(db_conn, doc.id, chunks, [vector], "test-model")
+    db_conn.commit()
+
+    with db_conn.cursor() as cur:
+        cur.execute(
+            "SELECT vector_dims(embedding) FROM chunks WHERE document_id = %s;",
+            (doc.id,),
+        )
+        row = cur.fetchone()
+        assert row is not None
+        assert row[0] == 1024
 
 
 def test_db_notebook_crud(db_conn: psycopg.Connection):

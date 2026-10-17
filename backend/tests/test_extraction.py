@@ -7,7 +7,12 @@ from __future__ import annotations
 import pymupdf
 import pytest
 
-from backend.rag.extraction import ExtractionError, PageText, extract_pages
+from backend.rag.extraction import (
+    CorruptPdfError,
+    NoExtractableTextError,
+    PageText,
+    extract_pages,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -65,15 +70,21 @@ class TestExtractPages:
         assert pages[1].page_number == 3
 
     def test_all_blank_pages_raises(self) -> None:
-        """A PDF where every page is blank raises ExtractionError."""
+        """A PDF where every page is blank raises NoExtractableTextError."""
         pdf = _make_pdf(["", ""])
-        with pytest.raises(ExtractionError, match="No extractable text"):
+        with pytest.raises(NoExtractableTextError, match="No extractable text"):
             extract_pages(pdf)
 
     def test_invalid_bytes_raises(self) -> None:
-        """Random bytes (not a PDF) raise ExtractionError."""
-        with pytest.raises(ExtractionError, match="Not a valid PDF"):
+        """Random bytes (not a PDF) raise CorruptPdfError."""
+        with pytest.raises(CorruptPdfError, match="Not a valid PDF"):
             extract_pages(b"this is not a pdf at all")
+
+    def test_corrupt_pdf_header_raises(self) -> None:
+        """Bytes with a PDF header but invalid structure raise CorruptPdfError."""
+        corrupt = b"%PDF-1.4\nnot a valid pdf body"
+        with pytest.raises(CorruptPdfError, match="Not a valid PDF"):
+            extract_pages(corrupt)
 
     def test_non_ascii_roundtrip(self) -> None:
         """Non-ASCII text (emoji, CJK) round-trips without errors."""

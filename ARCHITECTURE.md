@@ -33,6 +33,7 @@
 backend/
     api/
         HTTP endpoints
+        get_embedder() in api/documents.py is the only place api/ calls llm/factory
 
     services/
         orchestration only: ingest_document(), answer_question()
@@ -65,8 +66,11 @@ backend/
 
 ## Repository Layout
 
-  backend/        (pyproject.toml, uv.lock, api/, services/, rag/, db/, llm/, config.py, main.py, tests/)  
-  backend/db/migrations/   (numbered .sql files: 001_init.sql, ...)
+  backend/
+    pyproject.toml, uv.lock
+    src/backend/   (Python package: api/, services/, rag/, db/, llm/, config.py, main.py)
+    tests/
+    db/migrations/ (numbered .sql files: 001_init.sql, ...)
   frontend/       (React + Vite + TS)
   scripts/        (smoke_test.py, migrate.py)
   docker-compose.yml, .env.example, .gitignore, and the 7 docs
