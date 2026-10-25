@@ -48,11 +48,16 @@
 - [x] Top-k retrieval
 - [x] POST /notebooks/{id}/retrieve (inspection endpoint; M5 reuses the service)
 
-### M5 — Generation
-- [ ] Context construction
-- [ ] Grounded prompt
-- [ ] Citations
-- [ ] Source chunks
+### M5a — Context and prompt (pure functions, no model calls)
+- [x] Context construction
+- [x] Grounded prompt
+- [x] scripts/show_prompt.py (print the exact prompt for a question; no chat call)
+
+### M5b — Answer endpoint, citations, logging
+- [ ] POST /notebooks/{id}/chat
+- [ ] Citations (parse, validate, map to chunks)
+- [ ] Source chunks in the response
+- [ ] Short-circuit with "not found" when nothing is retrieved
 
 ### M6 — UI
 - [ ] React/Vite scaffold

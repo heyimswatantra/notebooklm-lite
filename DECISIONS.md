@@ -180,3 +180,27 @@ project rule "SQL only in db/".
 
 Retrieval gains reranking, hybrid search, query rewriting, or any other
 logic that is not a single database query.
+
+---
+
+## ADR-014 — Grounded prompt contract (M5a)
+
+### Decision
+
+- Retrieved chunks are labeled `[1]`..`[k]` in retrieval rank order in the
+  user message context block.
+- The model cites by those labels only (not page numbers or filenames in
+  citations).
+- When context is insufficient, the model must reply with exactly one fixed
+  sentence (`NOT_FOUND_MESSAGE` in `rag/prompting.py`); M5b may also
+  short-circuit without a model call when nothing is retrieved.
+- Prompt rules are plain text in `SYSTEM_PROMPT`; no provider structured-output
+  or JSON schema for citations in Phase 1.
+- `PROMPT_VERSION` (`grounded-v1`) tags the contract for logging and later
+  experiments.
+
+### Reason
+
+Keeps context construction and prompting as testable pure functions, aligns
+with ARCHITECTURE citation mapping, and avoids locking Phase 1 to one
+provider's response-format features.
