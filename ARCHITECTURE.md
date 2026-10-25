@@ -33,7 +33,7 @@
 backend/
     api/
         HTTP endpoints
-        get_embedder() in api/documents.py is the only place api/ calls llm/factory
+        dependencies.py — shared FastAPI deps (get_db, get_embedder)
 
     services/
         orchestration only: ingest_document(), answer_question()
@@ -43,7 +43,8 @@ backend/
     rag/
         extraction.py   (PyMuPDF)
         chunking.py
-        retrieval.py
+        (retrieval lives in db/chunks.py — it is a single SQL query,
+         not a pure-function RAG transform; see ADR-013)
         prompting.py    (context construction + citation parsing)
  
  

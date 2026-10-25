@@ -158,3 +158,25 @@ slight count mismatch doesn't affect retrieval quality.
 
 Batch-size and rate-limit logic in `voyage.py` must NOT rely on cl100k_base
 counts. Use Voyage's own `count_tokens()` for TPM tracking there.
+
+---
+
+## ADR-013 — Retrieval query lives in db/chunks.py, not rag/retrieval.py
+
+### Decision
+
+The vector similarity search is a single SQL query using pgvector's `<=>`
+operator. It lives in `db/chunks.py` alongside the existing chunk-insert
+functions.  `rag/` is reserved for CPU-only, database-free transforms
+(extraction, chunking).
+
+### Reason
+
+There is no pure-function RAG logic to separate out. The "retrieval" step
+is just a parameterised SQL query — putting it in `db/` follows the
+project rule "SQL only in db/".
+
+### Reconsider When
+
+Retrieval gains reranking, hybrid search, query rewriting, or any other
+logic that is not a single database query.

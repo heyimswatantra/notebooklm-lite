@@ -9,12 +9,12 @@ from backend.db.notebooks import notebook_exists
 from backend.llm.base import EmbeddingProvider
 from backend.rag.chunking import chunk_pages
 from backend.rag.extraction import extract_pages
+from backend.services.errors import NotebookNotFoundError  # re-export
 
 logger = logging.getLogger(__name__)
 
-
-class NotebookNotFoundError(Exception):
-    """Raised when the target notebook does not exist."""
+# Re-export so existing `from backend.services.ingestion import NotebookNotFoundError` keeps working.
+__all__ = ["NotebookNotFoundError", "ingest_document", "list_documents"]
 
 
 def ingest_document(

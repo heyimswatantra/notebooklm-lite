@@ -8,12 +8,12 @@ import psycopg
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.api.documents import get_embedder
+from backend.api.dependencies import get_embedder
 from backend.db.notebooks import create_notebook
 from backend.llm.base import EmbedResult, LLMError
 from backend.main import app
 from backend.services import ingestion as ingestion_service
-from backend.services.ingestion import NotebookNotFoundError
+from backend.services.errors import NotebookNotFoundError
 from tests.fakes import FakeEmbeddingProvider
 
 

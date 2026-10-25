@@ -5,23 +5,16 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from pydantic import BaseModel
 import psycopg
 
-from backend.config import get_settings
-from backend.db.connection import get_db
+from backend.api.dependencies import get_db, get_embedder
 from backend.llm.base import EmbeddingProvider, LLMError
-from backend.llm.factory import get_embedding_provider
 from backend.rag.extraction import CorruptPdfError, NoExtractableTextError
 from backend.db.documents import DocumentSummary
 from backend.services import ingestion as ingestion_service
-from backend.services.ingestion import NotebookNotFoundError
+from backend.services.errors import NotebookNotFoundError
 
 router = APIRouter(prefix="/notebooks/{notebook_id}/documents", tags=["documents"])
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
-
-
-def get_embedder() -> EmbeddingProvider:
-    """FastAPI dependency — configured embedding provider (sole api/ → llm/ touchpoint)."""
-    return get_embedding_provider(get_settings())
 
 
 class DocumentResponse(BaseModel):

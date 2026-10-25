@@ -28,7 +28,7 @@
 - [x] notebooks table
 - [x] documents table
 - [x] chunks table
-- [x] query_logs table
+- [x] query_logs table  
 - [x] Startup check: chunks.embedding dimension == EMBED_DIMENSION
 - [x] POST /notebooks, GET /notebooks
 
@@ -42,10 +42,11 @@
 - [x] GET /notebooks/{id}/documents
 
 ### M4 — Retrieval
-- [ ] Question embedding
-- [ ] Vector similarity search
-- [ ] Notebook filtering
-- [ ] Top-k retrieval
+- [x] Question embedding
+- [x] Vector similarity search
+- [x] Notebook filtering
+- [x] Top-k retrieval
+- [x] POST /notebooks/{id}/retrieve (inspection endpoint; M5 reuses the service)
 
 ### M5 — Generation
 - [ ] Context construction

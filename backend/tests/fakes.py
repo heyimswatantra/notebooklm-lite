@@ -23,16 +23,36 @@ class FakeChatProvider:
 
 
 class FakeEmbeddingProvider:
-    """Returns canned embeddings. Satisfies EmbeddingProvider protocol."""
-    def __init__(self, dimension: int = 1024, model: str = 'fake-embed-model'):
+    """Returns canned embeddings. Satisfies EmbeddingProvider protocol.
+
+    If *vectors* is supplied the provider pops from that list on each call
+    (one entry per ``embed()`` call, each entry is the full list of vectors
+    to return).  Otherwise every text gets a zero-vector.
+
+    *kinds* records every ``kind`` value received, so tests can assert
+    ``kind="query"`` was used.
+    """
+
+    def __init__(
+        self,
+        dimension: int = 1024,
+        model: str = "fake-embed-model",
+        vectors: list[list[list[float]]] | None = None,
+    ):
         self.dimension = dimension
         self.model = model
+        self._vectors = list(vectors) if vectors is not None else None
+        self.kinds: list[str] = []
 
     def embed(self, texts: list[str], *, kind: Literal['document', 'query']) -> EmbedResult:
-        # Return a vector of zeros for each text
-        vectors = [[0.0] * self.dimension for _ in texts]
+        self.kinds.append(kind)
+        if self._vectors:
+            vecs = self._vectors.pop(0)
+        else:
+            vecs = [[0.0] * self.dimension for _ in texts]
         return EmbedResult(
-            vectors=vectors,
+            vectors=vecs,
             model=self.model,
             dimension=self.dimension,
         )
+
