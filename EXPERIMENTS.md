@@ -2,10 +2,12 @@
 
 Log every RAG experiment here. Keep the newest experiment first. Preserve baseline results so later changes can be compared against the same questions and configuration.
 
+## Baselines
+
 ## Informal baseline (baseline-v0)
 
-- Date:
-- Git commit:
+- Date: 25-10-2026
+- Git commit: 9e4da2f
 - Corpus: eRAG (Salemi & Zamani 2024), Seven Failure Points (Barnett et al. 2024); one notebook, both PDFs
 - Config: chunk 500 tokens / 50 overlap, no cross-page chunks (ADR-006), voyage-4-lite 1024-dim, cosine, exact scan, k=5
 - Method: questions written before running; relevant = chunk alone contains the answer
@@ -50,6 +52,43 @@ Log every RAG experiment here. Keep the newest experiment first. Preserve baseli
 - Chunk size 300 vs 500 (after the eval set grows to ~30 questions)
 - Prepend document title to the embedded text
 - k=8 vs k=5 (Q3 would be a test case, once the cost in noise is measured)
+
+## Answer level baseline
+
+- Date: 27-10-2-26 
+- Git commit: 0fea33a
+- Chat model + temperature (default): ; PROMPT_VERSION: grounded-v1
+- Retrieval: k=5 unless stated; voyage-4-lite; chunk 500/50
+- Runs per question: 2–3 times, and outputs were stable
+
+| Id | Ques | Answered | Correct | Citations valid | Citations support the claim | Notes | 
+|---| ---|---|---|---|---|---|
+| Q1 | On average, how many times faster is eRAG than end-to-end evaluation? | True | Yes | Yes | Yes | |
+| Q2 | Which model was used as the default LLM in the eRAG experiments? | True | Yes | Yes | Yes | |
+| Q3 | How many documents did the BioASQ experiment use? | True | Yes | Yes | Yes | K@5 does not includes 15,000 documents, K@8 has 15,000 in the retrieved chunk (15,000\ndocuments), but llm does not flags the conflict maybe because it does not reads the value from this chunk, possibly due to \n character between 15,000 and documents. K@10 retrieves a chunks with 15,000 documents and LLM does flags the conflict.|
+| Q3 @k=5 | How many documents did the BioASQ experiment use? | True | Partial (4,017 only; conflict not flagged) | Yes | Yes | 15,000 chunk not retrieved (rank 8 in retrieval). FP2 in 7FP terms. |
+| Q3 @k=8 | (same) | True | Partial (conflict not flagged) | Yes | Yes | answer in context, not extracted ("15,000\ndocuments"); model still answered 4,017 only. |
+| Q3 @k=10 | (same) | True | Yes (conflict flagged) | Yes | Yes | Second chunk with "15,000 documents" retrieved; model flagged the conflict. |
+| Q4 | What goes wrong when someone asks about a topic the knowledge base touches on but never actually answers? | True | Yes | Yes | Yes | |
+| Q5 | Why not just have people label which passages are relevant when judging a retriever that feeds an LLM? | True | Yes | Yes | Yes | |
+| Q6 | List all seven failure points. | True | Yes | Yes | Yes | Does list all the seven points.|
+| Q7 | How much GPU memory did end-to-end evaluation need on NQ compared with eRAG? | True | Yes | Yes | Yes | Does correctly lists GPU memory from the table |
+| Q8 | Which failure points does the lesson about continuous calibration relate to? | True | Yes | Yes | Yes | Does correctly fetchs the FP2-7 |
+| Q9 | What do the papers say about chunk or passage size? | True | Yes | Yes | Yes | |
+| Q10 | How does eRAG compute a relevance label for a document? | True | Yes | Yes | Yes | |
+| Q11 | Which vector database did the AI Tutor use? | False | Correct refusal | - | - | LLM replies with "I could not find the answer in the provided documents." with No citations |
+| Q12 | What is a good recipe for pancakes? | False | Correct refusal | - | - | LLM replies with "I could not find the answer in the provided documents." with No citations |
+| Q13 | What GPU did the eRAG authors use, and what did training cost? | True | Yes | Yes | Yes | added after baseline-v0 (no retrieval row), Does correctly answers for GPU and specify absence of training cost in the documents. |
+
+### Summary
+- Answerable (Q1–Q10, Q13): 11/11 answered with valid citations that support the claims; 10 fully correct, 1 partial (Q3 at k=5 and k=8: only 4,017 reported, conflict not flagged).
+- Unanswerable (Q11, Q12): 2/2 correct refusals (exact sentence, no citations), including Q11 where the AI Tutor chunk was rank 1.
+- Partial-answer probe (Q13): gave the GPU and stated the training cost is not in the documents.
+- Every retrieval ✅ led to a correct answer; no case of good retrieval followed by a wrong answer, except the Q3 conflict case (answer in context, not flagged).
+
+### Observations
+- Conflict flagging appeared only at k=10, when two chunks carried the 15,000 figure. Causes not isolated: number of mentions, position in context.
+- The set is small and easy: 11/11 means it can't discriminate between pipeline variants. Expand to ~30 questions with harder cases before running EXP-001.
 
 ## EXP-001 — {Title}
 - Date:
