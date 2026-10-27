@@ -289,3 +289,21 @@ CSS-in-JS, or component UI libraries.
 Maintains full control over typography, spacing, and tone steps as specified in
 `DESIGN.md` with zero runtime CSS overhead and without pulling in large external
 design systems or utility classes.
+
+---
+
+## ADR-020 — Client-side citation parsing and source linking (M6b)
+
+### Decision
+
+Parse bracketed citation labels in the model answer client-side into interactive
+citation tokens, matching the backend parsing grammar from ADR-015. Clicking or
+focusing a citation tag highlights and scrolls to the corresponding source card
+in the evidence panel. Conversely, clicking a source card activates the
+corresponding citation tags in the answer.
+
+### Reason
+
+Keeps the backend contract simple (plain text answer with bracket labels) while
+enabling rich bidirectional evidence inspection in the UI without markdown or
+HTML parsing libraries.

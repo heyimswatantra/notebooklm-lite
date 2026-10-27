@@ -73,8 +73,8 @@
 - [x] Document list and upload (loading, success and error states)
 
 ### M6b — Chat and citations
-- [ ] Chat panel
-- [ ] Citation inspection (sources panel)
+- [x] Chat panel
+- [x] Citation inspection (sources panel)
 
 ### Phase 1 Exit Criteria
 

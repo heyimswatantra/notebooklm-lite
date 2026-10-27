@@ -1,4 +1,4 @@
-import type { Document, Notebook, ApiValidationError } from './types'
+import type { Document, Notebook, ApiValidationError, ChatResponse } from './types'
 
 export class ApiError extends Error {
   readonly status: number
@@ -20,6 +20,9 @@ function normalizeDetail(status: number, detail: unknown): string {
       return 'No extractable text in this PDF. It may be a scanned image.'
     }
     if (status === 502) {
+      if (detail.toLowerCase().includes('llm service')) {
+        return 'Model service failed. Try again.'
+      }
       return 'Embedding service failed. Nothing was saved. Try again.'
     }
     if (status === 404) {
@@ -45,7 +48,7 @@ function normalizeDetail(status: number, detail: unknown): string {
   }
 
   if (status === 502) {
-    return 'Embedding service failed. Nothing was saved. Try again.'
+    return 'Service temporarily unavailable. Try again.'
   }
   if (status >= 500) {
     return 'Something went wrong. Check your connection and try again.'
@@ -121,3 +124,26 @@ export async function uploadDocument(notebookId: number, file: File): Promise<Do
   })
 }
 
+export async function sendChat(
+  notebookId: number,
+  question: string,
+  k: number = 5,
+  signal?: AbortSignal,
+): Promise<ChatResponse> {
+  const trimmed = question.trim()
+  if (!trimmed) {
+    throw new ApiError(422, 'Question cannot be empty.')
+  }
+  if (trimmed.length > 2000) {
+    throw new ApiError(422, 'Question cannot exceed 2000 characters.')
+  }
+
+  return request<ChatResponse>(`/api/notebooks/${notebookId}/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ question: trimmed, k }),
+    signal,
+  })
+}
