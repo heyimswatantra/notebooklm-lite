@@ -1,22 +1,41 @@
-from backend.llm.base import (
-    ChatMessage, ChatResult, EmbedResult, LLMError,
-)
 from typing import Literal
 
+from backend.llm.base import (
+    ChatMessage,
+    ChatResult,
+    EmbedResult,
+    LLMError,
+)
+
+
 class FakeChatProvider:
-    """Returns canned responses. Satisfies ChatProvider protocol."""
-    def __init__(self, response_text: str = 'Hello from fake LLM', model: str = 'fake-model'):
-        self.response_text = response_text
-        self.model = model
-        self.last_messages: list[ChatMessage] | None = None
-        self.last_temperature: float | None = None
+    """Scripted chat responses. Satisfies ChatProvider protocol."""
+
+    def __init__(
+        self,
+        responses: list[str | ChatResult] | None = None,
+        *,
+        default_text: str = "Hello from fake LLM",
+        model: str = "fake-model",
+    ):
+        if responses is None:
+            responses = [default_text]
+        self._responses: list[str | ChatResult] = list(responses)
+        self.default_model = model
+        self.calls: list[list[ChatMessage]] = []
+        self.temperatures: list[float] = []
 
     def chat(self, messages: list[ChatMessage], *, temperature: float = 0.0) -> ChatResult:
-        self.last_messages = messages
-        self.last_temperature = temperature
+        self.calls.append(list(messages))
+        self.temperatures.append(temperature)
+        if not self._responses:
+            raise LLMError("FakeChatProvider: no scripted responses left")
+        item = self._responses.pop(0)
+        if isinstance(item, ChatResult):
+            return item
         return ChatResult(
-            text=self.response_text,
-            model=self.model,
+            text=item,
+            model=self.default_model,
             prompt_tokens=10,
             completion_tokens=5,
         )
@@ -44,7 +63,7 @@ class FakeEmbeddingProvider:
         self._vectors = list(vectors) if vectors is not None else None
         self.kinds: list[str] = []
 
-    def embed(self, texts: list[str], *, kind: Literal['document', 'query']) -> EmbedResult:
+    def embed(self, texts: list[str], *, kind: Literal["document", "query"]) -> EmbedResult:
         self.kinds.append(kind)
         if self._vectors:
             vecs = self._vectors.pop(0)
@@ -55,4 +74,3 @@ class FakeEmbeddingProvider:
             model=self.model,
             dimension=self.dimension,
         )
-

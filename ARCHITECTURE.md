@@ -45,7 +45,8 @@ backend/
         chunking.py
         (retrieval lives in db/chunks.py — it is a single SQL query,
          not a pure-function RAG transform; see ADR-013)
-        prompting.py    (context construction + citation parsing)
+        prompting.py    (context construction + grounded prompts)
+        citations.py    (citation label parsing from model answers)
  
  
     db/

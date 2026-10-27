@@ -11,7 +11,6 @@
 - **M4** Retrieval: question → top-k chunks + scores. *Verify: curl*
 - **M5** Generation: grounded prompt, citations, query_logs. *Verify: curl + log row*
 - **M6** React UI: notebooks, upload, chat, citation view
-- **M7** Observability
 
 ### M1 — Infrastructure
 - [x] Repository setup
@@ -54,10 +53,16 @@
 - [x] scripts/show_prompt.py (print the exact prompt for a question; no chat call)
 
 ### M5b — Answer endpoint, citations, logging
-- [ ] POST /notebooks/{id}/chat
-- [ ] Citations (parse, validate, map to chunks)
-- [ ] Source chunks in the response
-- [ ] Short-circuit with "not found" when nothing is retrieved
+- [x] POST /notebooks/{id}/chat
+- [x] Citations (parse, validate, map to chunks)
+- [x] Source chunks in the response
+- [x] Short-circuit with "not found" when nothing is retrieved
+
+### M5b — Observability
+- [x] Log questions
+- [x] Log retrieved chunks
+- [x] Log scores
+- [x] Log answers
 
 ### M6 — UI
 - [ ] React/Vite scaffold
@@ -65,12 +70,6 @@
 - [ ] Upload
 - [ ] Chat
 - [ ] Citation inspection
-
-### M7 — Observability
-- [ ] Log questions
-- [ ] Log retrieved chunks
-- [ ] Log scores
-- [ ] Log answers
 
 ### Phase 1 Exit Criteria
 

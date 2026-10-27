@@ -204,3 +204,38 @@ logic that is not a single database query.
 Keeps context construction and prompting as testable pure functions, aligns
 with ARCHITECTURE citation mapping, and avoids locking Phase 1 to one
 provider's response-format features.
+
+---
+
+## ADR-015 — Citation parsing (M5b)
+
+### Decision
+
+- Parse citation labels from model answer text in `rag/citations.py` via
+  `parse_citations(answer_text, valid_labels)`.
+- Accept bracket forms `[n]`, `[n][m]`, and `[n, m]` where each label is a
+  positive integer (comma-separated inside one pair of brackets).
+- Ignore non-citation brackets (e.g. `[sic]`, `[1-3]` ranges).
+- Return cited labels in **first-appearance order**, deduplicated.
+- Do **not** modify the answer text.
+
+### Reason
+
+Keeps parsing testable without DB or LLM fakes; matches the prompt contract
+in ADR-014.
+
+---
+
+## ADR-016 — Invalid citation labels (M5b)
+
+### Decision
+
+- Labels parsed from the answer that are not in the retrieved set (`valid_labels`)
+  are **dropped** from API `citations` and from the cited list in the response.
+- They are recorded in `query_logs.citations` jsonb as `invalid_labels`.
+- The model answer string stored and returned is unchanged.
+
+### Reason
+
+Prevents hallucinated chunk references while preserving the raw model output
+for evaluation and debugging.

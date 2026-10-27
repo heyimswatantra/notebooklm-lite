@@ -13,8 +13,8 @@ def test_fake_chat_provider_records_inputs():
     provider = FakeChatProvider()
     msgs = [ChatMessage(role='user', content='test')]
     provider.chat(msgs, temperature=0.7)
-    assert provider.last_messages == msgs
-    assert provider.last_temperature == 0.7
+    assert provider.calls[0] == msgs
+    assert provider.temperatures[0] == 0.7
 
 def test_fake_embedding_provider_satisfies_protocol():
     provider: EmbeddingProvider = FakeEmbeddingProvider(dimension=4)

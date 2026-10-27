@@ -6,6 +6,7 @@ from backend.db.connection import get_connection
 from backend.db.checks import verify_embedding_dimension
 from backend.api.notebooks import router as notebooks_router
 from backend.api.documents import router as documents_router
+from backend.api.chat import router as chat_router
 from backend.api.retrieve import router as retrieve_router
 
 
@@ -28,3 +29,4 @@ def health():
 app.include_router(notebooks_router)
 app.include_router(documents_router)
 app.include_router(retrieve_router)
+app.include_router(chat_router)

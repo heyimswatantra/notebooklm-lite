@@ -18,20 +18,11 @@ from backend.main import app
 from backend.services import retrieval as retrieval_service
 from backend.services.errors import NotebookNotFoundError
 from tests.fakes import FakeEmbeddingProvider
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-DIM = 1024
+from tests.helpers import DIM, setup_notebook_with_chunks, unit_vector
 
 
 def _unit_vector(axis: int, dim: int = DIM) -> list[float]:
-    """Return a unit vector with 1.0 at *axis* and 0.0 elsewhere."""
-    v = [0.0] * dim
-    v[axis] = 1.0
-    return v
+    return unit_vector(axis, dim)
 
 
 def _setup_notebook_with_chunks(
@@ -41,22 +32,9 @@ def _setup_notebook_with_chunks(
     notebook_name: str = "test-nb",
     filename: str = "doc.pdf",
 ) -> tuple[int, int]:
-    """Insert a notebook, document, and chunks with the given vectors.
-
-    Each chunk gets a trivial text, chunk_index equal to its position,
-    and page_number = 1.  Returns ``(notebook_id, document_id)``.
-    """
-    from backend.rag.chunking import Chunk
-
-    nb = create_notebook(conn, notebook_name)
-    doc = insert_document(conn, nb.id, filename, page_count=1)
-    chunks = [
-        Chunk(text=f"chunk-{i}", page_number=1, chunk_index=i, token_count=5)
-        for i in range(len(vectors))
-    ]
-    insert_chunks(conn, doc.id, chunks, vectors, "fake-embed-model")
-    conn.commit()
-    return nb.id, doc.id
+    return setup_notebook_with_chunks(
+        conn, vectors, notebook_name=notebook_name, filename=filename
+    )
 
 
 # ---------------------------------------------------------------------------
