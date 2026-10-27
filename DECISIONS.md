@@ -239,3 +239,53 @@ in ADR-014.
 
 Prevents hallucinated chunk references while preserving the raw model output
 for evaluation and debugging.
+
+---
+
+## ADR-017 — Vite dev proxy instead of CORS (M6a)
+
+### Decision
+
+Frontend requests to `/api/*` are proxied to the backend via Vite's dev server
+proxy, stripping the `/api` prefix. No CORS headers or origins are configured on
+the backend. The proxy target is configurable via an environment variable
+(`API_PROXY_TARGET`), defaulting to `http://backend:8000`.
+
+### Reason
+
+Avoids coupling the backend to frontend development origins or weakening
+security with permissive CORS policies. In production, a reverse proxy
+(e.g., Nginx, Caddy, Cloud Run routing) can apply the same path rewrite.
+
+---
+
+## ADR-018 — No router, state, or data-fetching library (M6a)
+
+### Decision
+
+Do not use React Router, Redux/Zustand, or TanStack Query. Manage application
+state with standard React hooks (`useState`, `useEffect`, custom hook
+`useDocuments`) and coordinate all backend communication through a single
+strongly-typed API client module (`src/api/client.ts`).
+
+### Reason
+
+The initial app is a single-screen document Q&A tool. Introducing routing or
+external state management adds dependency overhead and indirection without
+solving any problem present in Phase 1.
+
+---
+
+## ADR-019 — CSS Modules and CSS variables for styling (M6a)
+
+### Decision
+
+Use CSS Modules (`*.module.css`) for component-scoped styles alongside global
+CSS custom properties (tokens defined in `src/tokens.css`). Do not use Tailwind,
+CSS-in-JS, or component UI libraries.
+
+### Reason
+
+Maintains full control over typography, spacing, and tone steps as specified in
+`DESIGN.md` with zero runtime CSS overhead and without pulling in large external
+design systems or utility classes.

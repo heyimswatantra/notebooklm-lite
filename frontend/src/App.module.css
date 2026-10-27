@@ -1,0 +1,152 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--ground);
+}
+
+.railContainer {
+  /* width: 240px; */
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.mainColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 32px 40px;
+  gap: 32px;
+}
+
+.headerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notebookTitle {
+  font-size: var(--font-title-size);
+  font-weight: var(--font-title-weight);
+  line-height: var(--font-title-line);
+  color: var(--ink);
+}
+
+.documentsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chatReserved {
+  margin-top: auto;
+  min-height: 200px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.chatReserved p,
+.evidenceReserved p,
+.tabletEvidence p {
+  font-size: var(--font-reading-size);
+  line-height: var(--font-reading-line);
+  max-width: var(--reading-max-width);
+  color: var(--ink);
+  opacity: 0.55;
+}
+
+.evidencePanel {
+  width: 320px;
+  flex-shrink: 0;
+  height: 100%;
+  background-color: var(--surface);
+  padding: 32px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.evidenceReserved {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+}
+
+/* Tablet (640px to 959px) */
+@media (min-width: 640px) and (max-width: 959px) {
+  .railContainer {
+    width: 200px;
+  }
+
+  .layout {
+    flex-direction: row;
+  }
+
+  .mainColumn {
+    padding: 24px;
+    gap: 24px;
+  }
+
+  .evidencePanel {
+    display: none; /* In tablet, stacks inside main or below */
+  }
+
+  .tabletEvidence {
+    display: block;
+    margin-top: 16px;
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+  }
+}
+
+/* Desktop only: hide inline tablet/phone evidence */
+@media (min-width: 960px) {
+  .tabletEvidence {
+    display: none;
+  }
+}
+
+/* Phone (<640px) */
+@media (max-width: 639px) {
+  .layout {
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .railContainer {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+  }
+
+  .mainColumn {
+    height: auto;
+    overflow-y: visible;
+    padding: 16px;
+    gap: 20px;
+  }
+
+  .evidencePanel {
+    display: none;
+  }
+
+  .tabletEvidence {
+    display: block;
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+}

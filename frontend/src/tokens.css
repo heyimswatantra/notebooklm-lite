@@ -1,0 +1,40 @@
+@import '@fontsource-variable/inter';
+
+:root {
+  /* Palette */
+  --ground: #f4f3f1;
+  --surface: #eae8e5;
+  --surface-2: #d5d2cd;
+  --ink: #1d1d1f;
+  --accent: #2b5e8c;
+  --accent-hover: #224b70;
+  --error: #b44130;
+
+  /* Typography */
+  --font-family: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --font-title-size: 1.25rem;
+  --font-title-weight: 600;
+  --font-title-line: 1.3;
+
+  --font-section-size: 0.8125rem;
+  --font-section-weight: 600;
+  --font-section-line: 1.4;
+
+  --font-body-size: 0.875rem;
+  --font-body-weight: 400;
+  --font-body-line: 1.5;
+
+  --font-reading-size: 1rem;
+  --font-reading-weight: 400;
+  --font-reading-line: 1.575;
+  --reading-max-width: 70ch;
+
+  --font-caption-size: 0.75rem;
+  --font-caption-weight: 400;
+  --font-caption-line: 1.4;
+
+  /* Shape */
+  --radius: 4px;
+}
+

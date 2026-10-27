@@ -193,10 +193,23 @@ Keep these concerns separate:
 
 Do not create unnecessary abstractions.
 
++## Frontend
+
+- React + TypeScript (strict) + Vite. No router, UI kit, CSS framework, state
+  or data-fetching library unless asked. Styling: CSS Modules + CSS variables
+  (tokens from DESIGN.md).
+- All backend calls go through one typed client (src/api/client.ts); types
+  mirror the backend responses. Components never call fetch directly.
+- Use only existing backend endpoints. Do not change the backend for the UI
+  unless asked.
+- Checks: `npm run build` (includes tsc) and `npm run lint` must pass.
+- Quality floor: responsive down to phone width, visible keyboard focus,
+  labelled inputs, reduced motion respected, aria-live for upload status.
+
 ## Development Rules
 
 At the start of every session, read SPEC.md, ARCHITECTURE.md, ROADMAP.md
-and DECISIONS.md.
+and DECISIONS.md (and DESIGN.md for frontend work).
 Work on ONE roadmap milestone at a time, then stop and wait for my review.
 
 Before implementing a significant feature:

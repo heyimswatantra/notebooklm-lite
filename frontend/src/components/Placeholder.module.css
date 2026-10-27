@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.line {
+  height: 14px;
+  background-color: var(--surface-2);
+  border-radius: var(--radius);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.line:nth-child(1) {
+  width: 85%;
+}
+
+.line:nth-child(2) {
+  width: 65%;
+}
+
+.line:nth-child(3) {
+  width: 75%;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+

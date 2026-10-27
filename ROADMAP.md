@@ -65,11 +65,16 @@
 - [x] Log answers
 
 ### M6 — UI
-- [ ] React/Vite scaffold
-- [ ] Notebook list
-- [ ] Upload
-- [ ] Chat
-- [ ] Citation inspection
+
+### M6a — Foundation, notebooks, upload
+- [x] React/Vite scaffold + design tokens (saved as DESIGN.md)
+- [x] Frontend service in docker-compose, /api dev proxy
+- [x] Notebook list and create
+- [x] Document list and upload (loading, success and error states)
+
+### M6b — Chat and citations
+- [ ] Chat panel
+- [ ] Citation inspection (sources panel)
 
 ### Phase 1 Exit Criteria
 
